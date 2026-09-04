@@ -1,0 +1,62 @@
+name: ArXiv Daily Crawler
+on:
+  schedule:
+    - cron: '0 4 * * *'
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+jobs:
+  fetch-arxiv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch arxiv papers
+        env:
+          PYTHONUNBUFFERED: 1
+        run: python -u scripts/fetch_arxiv.py
+      
+      # 调试：打印docs文件夹，确认爬虫已经生成月份md
+      - name: 打印docs目录，查看爬虫产出
+        run: ls -R docs
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build VitePress site
+        run: |
+          npm ci
+          node scripts/build-search-index.mjs
+          npx vitepress build docs
+          echo "===== dist目录内容 ====="
+          ls -R docs/.vitepress/dist
+
+      - name: Deploy to gh‑pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.vitepress/dist
+
+      - name: Commit and push markdown changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs
+          if [ -n "$(git diff --cached --name-only)" ]; then
+            git commit -m "Update arxiv papers $(date +'%Y-%m-%d')"
+            git push
+          fi

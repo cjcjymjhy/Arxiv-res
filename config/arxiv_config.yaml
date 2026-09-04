@@ -1,0 +1,23 @@
+categories:
+  - cs.LG      # Machine Learning
+  - cs.AI      # Artificial Intelligence
+  - stat.ML    # Statistics‑Machine Learning
+  - cs.NE      # Neural and Evolutionary Computing
+  - physics.ao-ph  # Atmospheric and Oceanic Physics
+  - physics.geo-ph # Geophysics
+  - eess.SP    # Signal Processing
+  - eess.EN    # Environmental Engineering
+
+keywords:
+  - filter‑moved‑to‑python‑and‑logic
+start_date: "2026-06-01"
+output:
+  dir: "docs"
+  max_papers_per_category: 1000
+  include_summary: true
+  summary_max_length: 200
+markdown:
+  title: "Water Forecast & XAI‑ArXiv每日论文"
+  description: "深度学习水文预测、流域径流、水质预报 + 可解释AI(SHAP/LIME)相关论文追踪"
+  category_heading_level: 2
+  paper_heading_level: 3
