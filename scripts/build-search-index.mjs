@@ -12,6 +12,8 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const docsDir = path.resolve(__dirname, '..', 'docs')
 const outputFile = path.resolve(docsDir, 'public', 'search-index.json')
+const updateFile = path.resolve(docsDir, 'last_update.yml')
+const publicUpdateFile = path.resolve(docsDir, 'public', 'last_update.yml')
 
 // 确保输出目录存在
 const publicDir = path.resolve(docsDir, 'public')
@@ -134,6 +136,7 @@ function buildSearchIndex() {
   }
 
   fs.writeFileSync(outputFile, JSON.stringify(output), 'utf-8')
+  if (fs.existsSync(updateFile)) fs.copyFileSync(updateFile, publicUpdateFile)
   console.log(`✅ 搜索索引已生成: ${allPapers.length} 篇论文 -> ${outputFile}`)
 }
 
